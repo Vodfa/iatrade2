@@ -1647,6 +1647,48 @@ def test_api_version(botclient):
     assert rc.json() == {"version": __version__}
 
 
+def test_api_autotrade_panel(botclient):
+    _ftbot, client = botclient
+
+    rc = client_get(client, f"{BASE_URI}/autotrade/panel")
+    assert_response(rc)
+    assert rc.json()["enabled"] is False
+    assert rc.json()["timer_interval_sec"] == 60
+
+    payload = {
+        "selected_pairs": ["BTC/USDT", "ETH/USDT"],
+        "quote_currencies": ["USDT", "USDC"],
+        "extra_filters": ["high_volume"],
+        "timer_interval_sec": 30,
+        "browser": {"demo_url": "https://testnet.binance.vision/", "launch_on_start": False},
+    }
+    rc = client.put(
+        f"{BASE_URI}/autotrade/panel",
+        json=payload,
+        headers={
+            "Authorization": _basic_auth_str(_TEST_USER, _TEST_PASS),
+            "Origin": "http://example.com",
+            "content-type": "application/json",
+        },
+    )
+    assert_response(rc)
+    assert rc.json()["selected_pairs"] == payload["selected_pairs"]
+    assert rc.json()["timer_interval_sec"] == 30
+
+    rc = client_post(client, f"{BASE_URI}/autotrade/start")
+    assert_response(rc)
+    assert rc.json()["enabled"] is True
+    assert rc.json()["next_run_ts"] is not None
+
+    rc = client_post(client, f"{BASE_URI}/autotrade/run-now")
+    assert_response(rc)
+    assert rc.json()["last_run_ts"] is not None
+
+    rc = client_post(client, f"{BASE_URI}/autotrade/stop")
+    assert_response(rc)
+    assert rc.json()["enabled"] is False
+
+
 def test_api_blacklist(botclient, mocker):
     _ftbot, client = botclient
 

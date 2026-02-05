@@ -59,7 +59,8 @@ logger = logging.getLogger(__name__)
 # 2.43: Add /profit_all endpoint
 # 2.44: Add candle_types parameter to download-data endpoint
 # 2.45: Add price to forceexit endpoint
-API_VERSION = 2.45
+# 2.46: Add autotrade panel and timers endpoints
+API_VERSION = 2.46
 
 # Public API, requires no auth.
 router_public = APIRouter()
