@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Any
 
-from pydantic import AwareDatetime, BaseModel, RootModel, SerializeAsAny, model_validator
+from pydantic import AwareDatetime, BaseModel, Field, RootModel, SerializeAsAny, model_validator
 
 from freqtrade.constants import DL_DATA_TIMEFRAMES, IntOrInf
 from freqtrade.enums import MarginMode, OrderTypeValues, SignalDirection, TradingMode
@@ -33,6 +33,25 @@ class Version(BaseModel):
 
 class StatusMsg(BaseModel):
     status: str
+
+
+class AutoTradeBrowserConfig(BaseModel):
+    demo_url: str = "https://testnet.binance.vision/"
+    launch_on_start: bool = True
+
+
+class AutoTradePanelConfigPayload(BaseModel):
+    selected_pairs: list[str] = Field(min_length=1)
+    quote_currencies: list[str] = Field(min_length=1)
+    extra_filters: list[str] = Field(default_factory=list)
+    timer_interval_sec: int = Field(ge=5, le=86400)
+    browser: AutoTradeBrowserConfig
+
+
+class AutoTradePanelConfig(AutoTradePanelConfigPayload):
+    enabled: bool
+    last_run_ts: int | None = None
+    next_run_ts: int | None = None
 
 
 class BgJobStarted(StatusMsg):
