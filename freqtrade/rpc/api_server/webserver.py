@@ -186,6 +186,7 @@ class ApiServer(RPCHandler):
 
     def configure_app(self, app: FastAPI, config):
         from freqtrade.rpc.api_server.api_auth import http_basic_or_jwt_token, router_login
+        from freqtrade.rpc.api_server.api_autotrade import router as api_autotrade
         from freqtrade.rpc.api_server.api_background_tasks import router as api_bg_tasks
         from freqtrade.rpc.api_server.api_backtest import router as api_backtest
         from freqtrade.rpc.api_server.api_download_data import router as api_download_data
@@ -209,6 +210,12 @@ class ApiServer(RPCHandler):
         )
         app.include_router(
             api_trading,
+            prefix="/api/v1",
+            tags=["Trading"],
+            dependencies=[Depends(http_basic_or_jwt_token), Depends(is_trading_mode)],
+        )
+        app.include_router(
+            api_autotrade,
             prefix="/api/v1",
             tags=["Trading"],
             dependencies=[Depends(http_basic_or_jwt_token), Depends(is_trading_mode)],

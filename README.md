@@ -9,6 +9,37 @@ Freqtrade is a free and open source crypto trading bot written in Python. It is 
 
 ![freqtrade](https://raw.githubusercontent.com/freqtrade/freqtrade/develop/docs/assets/freqtrade-screenshot.png)
 
+## Extensões desta branch (IA Trade)
+
+Esta branch adiciona uma camada de **AutoTrade orientada por painel** para facilitar o setup operacional em modo demo:
+
+- **Painel de seleção de ativos** (via API) para escolher:
+  - pares de crypto (`selected_pairs`),
+  - moedas de cotação (`quote_currencies`),
+  - filtros adicionais (`extra_filters`).
+- **Sistema de AutoTrade com timers**:
+  - intervalo configurável com `timer_interval_sec`,
+  - start/stop do scheduler,
+  - execução imediata com endpoint `run-now`.
+- **Navegador integrado para demo**:
+  - suporte para abrir automaticamente uma URL de ambiente demo/sandbox (por padrão Binance Testnet).
+
+### Endpoints novos (API v1)
+
+- `GET /api/v1/autotrade/panel`
+- `PUT /api/v1/autotrade/panel`
+- `POST /api/v1/autotrade/start`
+- `POST /api/v1/autotrade/stop`
+- `POST /api/v1/autotrade/run-now`
+- `GET /api/v1/autotrade/demo-disclaimer`
+
+### Fluxo recomendado para validar em demo
+
+1. Configure o painel com seus pares/moedas e timer.
+2. Use exchange em sandbox + `dry_run`.
+3. Inicie o AutoTrade e acompanhe os eventos pela API/WebUI.
+4. Só depois de validar estratégia, risco e execução, considerar ambiente real.
+
 ## Disclaimer
 
 This software is for educational purposes only. Do not risk money which
